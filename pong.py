@@ -14,27 +14,27 @@ run = True
 clock = pygame.time.Clock()
 
 # background
-back_surf = pygame.image.load("assets/background.png")
+back_surf = pygame.image.load("assets/pong/background.png")
 back_rect = back_surf.get_rect(center=(W/2, H/2))
 
 # paddles and score
 surf_height = 100
 player1_score = 0
 player2_score = 0
-player_surf = pygame.image.load("assets/paddle.png").convert_alpha()
+player_surf = pygame.image.load("assets/pong/paddle.png").convert_alpha()
 player_surf_scale = pygame.transform.smoothscale(player_surf, (5, surf_height))
 player1_rect = player_surf_scale.get_rect(midleft=(10, H/2))
 player2_rect = player_surf_scale.get_rect(midright=(W-10, H/2))
 
 # display score
-font = pygame.font.Font('assets/PixelType.ttf', 100)
+font = pygame.font.Font('assets/pong/PixelType.ttf', 100)
 game_score = font.render(f"{player1_score}   {player2_score}", False, (255, 255, 255))
 game_score_rect = game_score.get_rect(center=(W/2, 50))
 game_active = True
 
 # ball
 speed = 5
-ball_surf = pygame.image.load("assets/ball.png").convert_alpha()
+ball_surf = pygame.image.load("assets/pong/ball.png").convert_alpha()
 ball_rect = ball_surf.get_rect(center=(W/2, H/2))
 ball_x_speed = choice([-7, 7])
 ball_y_speed = choice([-7, 7])
