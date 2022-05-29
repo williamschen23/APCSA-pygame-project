@@ -1,43 +1,50 @@
 import pygame
 from random import choice
-import math
+from math import floor
+
+# setup
 size = W, H = 900, 500
 WINDOW = pygame.display.set_mode(size)
+pygame.init()
 pygame.display.set_caption("Pong")
+
+# misc
 FPS = 60
+run = True
+clock = pygame.time.Clock()
+
+# background
+back_surf = pygame.image.load("assets/background.png")
+back_rect = back_surf.get_rect(center=(W/2, H/2))
+
+# paddles and score
+surf_height = 100
 player1_score = 0
 player2_score = 0
-pygame.init()
-clock = pygame.time.Clock()
-surf_height = 100
 player_surf = pygame.image.load("assets/paddle.png").convert_alpha()
 player_surf_scale = pygame.transform.smoothscale(player_surf, (5, surf_height))
 player1_rect = player_surf_scale.get_rect(midleft=(10, H/2))
 player2_rect = player_surf_scale.get_rect(midright=(W-10, H/2))
+
+# display score
 font = pygame.font.Font('assets/PixelType.ttf', 100)
 game_score = font.render(f"{player1_score}   {player2_score}", False, (255, 255, 255))
 game_score_rect = game_score.get_rect(center=(W/2, 50))
 game_active = True
 
+# ball
+speed = 5
 ball_surf = pygame.image.load("assets/ball.png").convert_alpha()
 ball_rect = ball_surf.get_rect(center=(W/2, H/2))
 ball_x_speed = choice([-7, 7])
 ball_y_speed = choice([-7, 7])
 
-back_surf = pygame.image.load("assets/background.png")
-back_rect = back_surf.get_rect(center=(W/2, H/2))
-print(player1_rect.w, player2_rect.h)
-print(player1_rect, player2_rect)
-
-current_time = int(pygame.time.get_ticks()/1000)
-# print(rect.top, rect.bottom, rect.midtop, rect.midbottom, rect.midleft, rect.midright)
-#TODO ORGANIZE
-speed = 5
-
+# an event triggers every 5 minute
 timer = pygame.USEREVENT + 1
 pygame.time.set_timer(timer, 5000)
 
 
+# drawing surfaces
 def draw():
     WINDOW.blit(back_surf, back_rect)
     WINDOW.blit(game_score, game_score_rect)
@@ -51,35 +58,32 @@ def draw():
     pygame.display.update()
 
 
-run = True
 while run:
+    # controlling the frames
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
         if event.type == timer and game_active:
+            # at a certain time interval the paddles gets smaller
             if surf_height > 50:
                 surf_height -= 5
                 player_surf_scale = pygame.transform.smoothscale(player_surf, (5, surf_height))
                 player1_rect = player_surf_scale.get_rect(center=player1_rect.center)
                 player2_rect = player_surf_scale.get_rect(center=player2_rect.center)
                 speed += .2
-                speed = math.floor(speed * 10) / 10
+                speed = floor(speed * 10) / 10
                 print(speed)
 
+        # reactivate the game
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 game_active = True
-        """
-            if event.key == pygame.K_g:
-                WINDOW.fill("Green")
-            if event.key == pygame.K_b:
-                WINDOW.fill("black")
-            if event.key == pygame.K_r:
-                WINDOW.fill("red")
-        """
+
+    # if the game is active check keyboard inputs
     if game_active:
         keys = pygame.key.get_pressed()
+        # paddle movements
         if keys[pygame.K_w] and player1_rect.top > 0:
             player1_rect.y -= speed
         if keys[pygame.K_s] and player1_rect.bottom < H:
@@ -89,9 +93,11 @@ while run:
         if keys[pygame.K_DOWN] and player2_rect.bottom < H:
             player2_rect.y += speed
 
+        # ball movements
         ball_rect.x += ball_x_speed
         ball_rect.y += ball_y_speed
 
+        # checks if the ball hit the wall or go past the paddle
         if ball_rect.bottom >= H or ball_rect.top <= 0:
             ball_y_speed = -ball_y_speed
         if ball_rect.colliderect(player1_rect):
@@ -104,21 +110,27 @@ while run:
         if ball_rect.right >= W + 30:
             player1_score += 1
             game_active = False
+
+    # reset the game while waiting for input
     else:
-        # reset the game while waiting for input
+        # game score
         game_score = font.render(f"{player1_score}   {player2_score}", False, (255, 255, 255))
         game_score_rect = game_score.get_rect(center=(W/2, 50))
         WINDOW.blit(game_score, game_score_rect)
+
+        # reset the paddle to original length and the speed of paddle
         surf_height = 100
-        ball_rect.center = (W/2, H/2)
+        speed = 5
         player_surf_scale = pygame.transform.smoothscale(player_surf, (5, surf_height))
         player1_rect = player_surf_scale.get_rect(midleft=(10, H/2))
         player2_rect = player_surf_scale.get_rect(midright=(W - 10, H/2))
-        speed = 5
 
+        # resets the ball
+        ball_rect.center = (W/2, H/2)
+        ball_x_speed = choice([-7, 7])
+        ball_y_speed = choice([-7, 7])
+
+    # draws the elements
     draw()
-print(pygame.font.get_fonts())
+
 pygame.quit()
-
-
-
