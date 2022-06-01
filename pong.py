@@ -100,13 +100,27 @@ while run:
         # checks if the ball hit the wall or go past the paddle
         if ball_rect.bottom >= H or ball_rect.top <= 0:
             ball_y_speed = -ball_y_speed
-        if ball_rect.colliderect(player1_rect):
-            ball_x_speed = -ball_x_speed
-        if ball_rect.colliderect(player2_rect):
-            ball_x_speed = -ball_x_speed
+
+        if ball_rect.colliderect(player2_rect) and ball_x_speed > 0:
+            if abs(ball_rect.right - player2_rect.left) < 10:
+                ball_x_speed *= -1
+            elif abs(ball_rect.bottom - player2_rect.top) < 10 and ball_y_speed > 0:
+                ball_y_speed *= -1
+            elif abs(ball_rect.top - player2_rect.bottom) < 10 and ball_y_speed < 0:
+                ball_y_speed *= -1
+
+        if ball_rect.colliderect(player1_rect) and ball_x_speed < 0:
+            if abs(ball_rect.left - player1_rect.right) < 10:
+                ball_x_speed *= -1
+            elif abs(ball_rect.bottom - player1_rect.top) < 10 and ball_y_speed > 0:
+                ball_y_speed *= -1
+            elif abs(ball_rect.top - player1_rect.bottom) < 10 and ball_y_speed < 0:
+                ball_y_speed *= -1
+
         if ball_rect.left <= -30:
             player2_score += 1
             game_active = False
+
         if ball_rect.right >= W + 30:
             player1_score += 1
             game_active = False
