@@ -152,6 +152,8 @@ while run:
             make_aliens()
             ms = 500
             pygame.time.set_timer(alien_move_timer, ms)
+            wave_score_surf = font.render(f"Wave: {level}", False, 'white')
+            wave_score_rect = wave_score_surf.get_rect(topleft=(20, 60))
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and spaceship_rect.left > 0:
