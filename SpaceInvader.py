@@ -133,7 +133,6 @@ def would_collide():
 make_aliens()
 
 while run:
-    print(game)
     clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
